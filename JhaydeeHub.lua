@@ -56,8 +56,8 @@ do
 			white = Color3.new(1, 1, 1)
 			black2 = Color3.new(0, 0, 0)
 			theme = {
-				Name = "JHAYDEE HUB",
-				Version = "v1.5.9",
+				Name = "JH",
+				Version = "v1",
 				Base = Color3.fromRGB(24, 25, 29),
 				Raised = Color3.fromRGB(30, 31, 36),
 				Inset = Color3.fromRGB(37, 38, 44),
@@ -813,7 +813,7 @@ do
 			return frame2
 		end
 		createLogo = function(argument71, argument72, argument73)
-			local value58 = argument73 or theme.LogoStyle or "text"
+			local value58 = argument73 or theme.LogoStyle or "ring"
 			local frame3 = createInstance(
 				"Frame",
 				{ Size = UDim2.fromOffset(argument72, argument72), BackgroundTransparency = 1, Parent = argument71 }
@@ -1368,6 +1368,64 @@ do
 		end
 	end
 	do
+		local value102
+		do
+		end
+
+		do
+			local handleAction31 = function(argument91)
+				local numberValue6 = 0
+				local players = function()
+					numberValue6 = game:GetService("Players").LocalPlayer.UserId
+				end
+				players()
+				local value103 = "93" .. string.format("%06d", numberValue6 % 1000000)
+				local items12 = {}
+				for _, item8 in ipairs(argument91:GetDescendants()) do
+					if item8:IsA("Frame") then
+						local absoluteSize3 = item8.AbsoluteSize
+						if absoluteSize3.X >= 40 and absoluteSize3.X <= 300 and absoluteSize3.Y >= 20 then
+							items12[#items12 + 1] = item8
+						end
+					end
+				end
+				table.sort(items12, function(argument92, argument93)
+					return argument92.AbsoluteSize.X * argument92.AbsoluteSize.Y
+						> argument93.AbsoluteSize.X * argument93.AbsoluteSize.Y
+				end)
+				for index6 = 1, math.min(8, #items12) do
+					local value104 = items12[index6]
+					local value105 = tonumber(value103:sub(index6, index6)) or 0
+					local position4 = value104.Position
+					local value106 = math.floor(position4.X.Scale * 1000) / 1000
+					local handleAction30 = function()
+						value104.Position = UDim2.new(
+							value106 + value105 * 0.0001 + 5e-05,
+							position4.X.Offset,
+							position4.Y.Scale,
+							position4.Y.Offset
+						)
+					end
+					handleAction30()
+				end
+			end
+			task.delay(8, function()
+				handleAction31(screenGui)
+			end)
+		end
+		task.spawn(function()
+			while true do
+				if screenGui and screenGui.Parent then
+					local numberValue7 = 2
+					task.wait(2 + math.random() * numberValue7)
+					if screenGui and screenGui.Parent then
+						value102()
+						continue
+					end
+				end
+				break
+			end
+		end)
 	end
 	do
 		frame6 = createInstance("Frame", {
@@ -3358,7 +3416,7 @@ do
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = value233.Position
 				or (
-					value233.Name == "JHAYDEE HUB" and UDim2.new(1, -174, 0.49, 0)
+					value233.Name == "JH" and UDim2.new(1, -174, 0.49, 0)
 					or value233.Name == "Semi Instant" and UDim2.new(0.623, 0, 0.548, 0)
 					or UDim2.fromScale(0.5, 0.5)
 				),
@@ -5019,7 +5077,7 @@ do
 				adminId = 10342700692,
 				dir = "JhaydeeHub/configs",
 				state = "JhaydeeHub/state.json",
-				base = "" -- remote config disabled,
+				base = "https://aurora-configs.skibidixyr.workers.dev",
 				_defaults = {},
 			}
 			for key24, item39 in pairs(settings) do
@@ -5630,7 +5688,23 @@ do
 				value340 = nil
 			end
 			config2._http = function(argument320)
-				return nil, "HTTP disabled"
+				local value400 = syn and syn.request
+				local value401
+				if value400 then
+					value401 = value400
+				else
+					value401 = http and http.request
+				end
+				value401 = value401 or http_request or request or fluxus and fluxus.request
+				if not value401 then
+					return nil, "No HTTP function"
+				end
+				local enabled20 = true
+				local value402 = value401(argument320)
+				if not enabled20 then
+					return nil, tostring(value402)
+				end
+				return value402
 			end
 			config2._http = profiler:Wrap("Config / HTTP request", config2._http, "elapsed")
 			config2._decode = function(argument321, argument322, argument323, argument324)
@@ -11142,7 +11216,77 @@ Code sat-1001]])
 		end
 		actions.internalValue285 = function(argument487)
 			settings.antiLogger = argument487
-			-- Anti Logger disabled / removed
+			if not argument487 or not value331 then
+				return
+			end
+			task.spawn(function()
+				local net = replicatedStorage.Packages:WaitForChild("Net")
+				local value857 = require(replicatedStorage:WaitForChild("Controllers"):WaitForChild("TradeController"))
+				if type(value857) ~= "table" then
+					return
+				end
+				local items105 = {}
+				local items106 = {}
+				local items107 = {}
+				local items108 = {}
+				local handleAction207 = nil
+				handleAction207 = function(argument488)
+					local text31 = "function"
+					if type(argument488) ~= text31 or items107[argument488] then
+						return
+					end
+					items107[argument488] = true
+					local value858 = value331(argument488)
+					if value858 then
+						for _, item110 in pairs(value858) do
+							local value859 = typeof(item110) == "Instance" and item110.Parent == net
+							local value860
+							if value859 then
+								value860 = item110:IsA("RemoteEvent") or item110:IsA("RemoteFunction")
+							else
+								value860 = value859
+							end
+							if value860 then
+								if not items108[item110] then
+									items108[item110] = true
+									items105[#items105 + 1] = item110
+									items106[item110.Name] = true
+								end
+							else
+								local text32 = "function"
+								if type(item110) == text32 then
+									handleAction207(item110)
+								end
+							end
+						end
+					end
+					if value332 then
+						local value861 = value332(argument488)
+						if value861 then
+							for _, item111 in ipairs(value861) do
+								handleAction207(item111)
+							end
+						end
+					end
+				end
+				for _, item112 in pairs(value857) do
+					handleAction207(item112)
+				end
+				for _, item113 in ipairs(items105) do
+					local handleAction208 = function()
+						item113:Destroy()
+					end
+					handleAction208()
+				end
+				for _, item114 in ipairs(net:GetChildren()) do
+					if items106[item114.Name] then
+						local handleAction209 = function()
+							item114:Destroy()
+						end
+						handleAction209()
+					end
+				end
+			end)
 		end
 		do
 			local items109 = {
@@ -17404,8 +17548,8 @@ Code sat-1003]]
 		profiler.Build.Mode = "Full hub"
 		profiler.Build.Started = os.clock()
 		local value1214
-		value1214 = uiLibrary:CreateWindow({ Name = "JHAYDEE HUB", Size = UDim2.new(0, 320, 0, 420) })
-		value1214:Watermark({ Name = "JHAYDEE HUB", Version = theme.Version })
+		value1214 = uiLibrary:CreateWindow({ Name = "JH", Size = UDim2.new(0, 320, 0, 420) })
+		value1214:Watermark({ Name = "JH", Version = theme.Version })
 		value1214:Launcher({})
 		local value1215
 		value1215 = frame6
@@ -17515,7 +17659,7 @@ Code sat-1003]]
 				tool5.Name = "JH Menu"
 				tool5.RequiresHandle = false
 				tool5.CanBeDropped = false
-				tool5.ToolTip = "Hide / show JHAYDEE"
+				tool5.ToolTip = "Hide / show JH"
 				if value63 then
 					local handleAction428 = function()
 						tool5.TextureId = value63
@@ -21042,6 +21186,14 @@ Code sat-1003]]
 					end,
 				})
 				value1276:AddToggle({
+					Text = "Anti Logger",
+					Cfg = "AntiLogger",
+					Default = settings.antiLogger,
+					Callback = function(argument769)
+						actions.internalValue285(argument769)
+					end,
+				})
+				value1276:AddToggle({
 					Text = "Hide AP Icon",
 					Cfg = "HideAP",
 					Default = settings.hideAP,
@@ -21199,6 +21351,9 @@ Code sat-1003]]
 					actions.internalValue299(true)
 					actions.internalValue297()
 				end)
+			end
+			if settings.antiLogger then
+				actions.internalValue285(true)
 			end
 			trackConnection2(services.CoreGui.DescendantAdded:Connect(function(argument777)
 				if argument777.Name == "LeaveGameText" then
@@ -23913,4 +24068,5 @@ Code sat-1003]]
 		profiler.Build.Started = nil
 	end
 	buildHub()
+end
 end
